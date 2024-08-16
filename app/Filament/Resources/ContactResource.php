@@ -70,11 +70,10 @@ class ContactResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
+            ->columns([Tables\Columns\TextColumn::make('title'),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+            ->searchable()
+            ->sortable(),
                 Tables\Columns\TextColumn::make('gender')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('designation')
@@ -83,18 +82,13 @@ class ContactResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('fax')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('phone_number')
-                    ->numeric()
-                    ->sortable(),
+            Tables\Columns\TextColumn::make('fax'),
+            Tables\Columns\TextColumn::make('phone_number')
+            ->searchable(),
                 Tables\Columns\TextColumn::make('mobile_number')
-                    ->numeric()
-                    ->sortable(),
+            ->searchable(),
                 Tables\Columns\TextColumn::make('extension_number')
-                    ->numeric()
-                    ->sortable(),
+            ->numeric(),
                 Tables\Columns\TextColumn::make('organisation_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('organisation_department')
