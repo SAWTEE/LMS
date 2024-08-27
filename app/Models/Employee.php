@@ -20,4 +20,9 @@ class Employee extends Model
     {
         return $this->hasMany(BookIssue::class);
     }
+
+    // public function inventoryIssues(): HasMany
+    // {
+    //     return $this->hasMany(InvertoryIssue::class);
+    // }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BookResource\Pages;
 use App\Filament\Resources\BookResource\RelationManagers;
 use App\Models\Book;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -36,10 +37,30 @@ class BookResource extends Resource
             ,
                 Forms\Components\Select::make('book_category_id')
             ->relationship('category', 'name')
+            ->searchable()
+            ->preload()
+            ->createOptionForm([
+                Forms\Components\TextInput::make('name')
+                ->required(),
+            ])
+                ->editOptionForm([
+                    Forms\Components\TextInput::make('name')
+                        ->required(),
+                ])
                     ->required()
                     ->native(false),
                 Forms\Components\Select::make('shelf_id')
                     ->relationship('shelf', 'name')
+            ->searchable()
+            ->preload()
+            ->createOptionForm([
+                Forms\Components\TextInput::make('name')
+                    ->required(),
+            ])
+                ->editOptionForm([
+                    Forms\Components\TextInput::make('name')
+                        ->required(),
+                ])
                     ->required()
                     ->native(false),
                 Forms\Components\TextInput::make('publisher')
@@ -89,14 +110,17 @@ class BookResource extends Resource
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
+            ->actions([ActionGroup::make([Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('Issue Book')
+                Tables\Actions\Action::make('issue')
                     ->button()
-                    ->action('issueBook')
+                    ->action(function (Book $record) {
+                        return redirect(BookIssueResource::getUrl('create', ['book_id' => $record->id]));
+                    })
                     ->color('primary'),
-            ])
+            ])->iconButton(),
+
+        ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -109,8 +133,8 @@ class BookResource extends Resource
     public static function getRelations(): array
     {
         return [
-            BookResource\RelationManagers\CategoryRelationManager::class,
-            BookResource\RelationManagers\ShelfRelationManager::class,
+            RelationManagers\CategoryRelationManager::class,
+            RelationManagers\ShelfRelationManager::class,
         ];
     }
 

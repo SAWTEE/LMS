@@ -2,21 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\BookIssueResource\Pages;
-use App\Filament\Resources\BookIssueResource\RelationManagers;
-use App\Models\BookIssue;
+use App\Filament\Resources\InventoryIssueResource\Pages;
+use App\Filament\Resources\InventoryIssueResource\RelationManagers;
+use App\Models\Inventory;
+use App\Models\InventoryIssue;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class BookIssueResource extends Resource
+class InventoryIssueResource extends Resource
 {
-    protected static ?string $model = BookIssue::class;
-    protected static ?string $navigationGroup = 'Manage Library';
+    protected static ?string $model = InventoryIssue::class;
+    protected static ?string $navigationGroup = 'Manage Inventory';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -24,23 +26,27 @@ class BookIssueResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('book_id')
-                    ->relationship('book', 'title')
-                ->searchable()
-                ->native(false)
-                // ->getSelectedRecord()
-                ->required(),
-            // Forms\Components\TextInput::make('book_id')
-            //     ->label('Book ID')
-            //     ->disabled(),
+                Forms\Components\Select::make('inventory_id')
+                    ->relationship('inventory', 'item_name')
+                    ->required(),
                 Forms\Components\Select::make('employee_id')
-                    ->relationship('employee', 'name')
+                    ->required()
+                    ->relationship('employee', 'name'),
+                Forms\Components\TextInput::make('quantity')
+                    ->required()
+                    ->numeric()
+                    ->default(1),
+                Forms\Components\Toggle::make('returnable')
+                    ->label('Returnable Item')
+                    ->live()
                     ->required(),
                 Forms\Components\DatePicker::make('issue_date')
                     ->required(),
-                Forms\Components\DatePicker::make('return_date'),
+                Forms\Components\DatePicker::make('return_date')
+                    ->visible(fn(Get $get): bool =>  $get('returnable'))
+                    ->required(),
                 Forms\Components\Textarea::make('remarks')
-                ->columnSpanFull(),
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -48,18 +54,23 @@ class BookIssueResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('book.title')
+                Tables\Columns\TextColumn::make('inventory_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('employee.name')
+                Tables\Columns\TextColumn::make('employee_id')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('quantity')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('returnable')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('issue_date')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('return_date')
                     ->date()
-            ->sortable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -72,8 +83,9 @@ class BookIssueResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([Tables\Actions\ViewAction::make(),
-            Tables\Actions\EditAction::make(),
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -92,10 +104,10 @@ class BookIssueResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBookIssues::route('/'),
-            'create' => Pages\CreateBookIssue::route('/create'),
-            'view' => Pages\ViewBookIssue::route('/{record}'),
-            'edit' => Pages\EditBookIssue::route('/{record}/edit'),
+            'index' => Pages\ListInventoryIssues::route('/'),
+            'create' => Pages\CreateInventoryIssue::route('/create'),
+            'view' => Pages\ViewInventoryIssue::route('/{record}'),
+            'edit' => Pages\EditInventoryIssue::route('/{record}/edit'),
         ];
     }
 }

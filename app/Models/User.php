@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 
-class User extends Authenticatable implements MustVerifyEmail, FilamentUser
+class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
@@ -48,9 +48,9 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
         ];
     }
 
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return str_ends_with($this->email, '@sawtee.org');
-    }
+    // public function canAccessPanel(Panel $panel): bool
+    // {
+    //     return str_ends_with($this->email, '@sawtee.org');
+    // }
 
 }
