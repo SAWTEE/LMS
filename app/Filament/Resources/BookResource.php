@@ -112,7 +112,7 @@ class BookResource extends Resource
             ])
             ->actions([ActionGroup::make([Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('issue')
+                Tables\Actions\Action::make('Issue Book')
                     ->button()
                     ->action(function (Book $record) {
                         return redirect(BookIssueResource::getUrl('create', ['book_id' => $record->id]));

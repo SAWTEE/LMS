@@ -5,8 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InventoryResource\Pages;
 use App\Filament\Resources\InventoryResource\RelationManagers;
 use App\Models\Inventory;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -32,9 +34,13 @@ class InventoryResource extends Resource
                 Forms\Components\TextInput::make('quantity')
                     ->required()
                     ->numeric()
+                    ->minValue(0)
+                    ->live()
                     ->default(1),
                 Forms\Components\Toggle::make('in_stock')
-                    ->required(),
+                    ->inline(false)
+                    ->declined(fn(Get $get) => $get('quantity') === 0)
+                    ->label('In Stock'),
                 Forms\Components\Textarea::make('remarks')
                     ->columnSpanFull(),
             ]);
@@ -70,8 +76,16 @@ class InventoryResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\Action::make('Issue Inventory')
+                        ->button()
+                        ->action(function (Inventory $record) {
+                            return redirect(InventoryIssueResource::getUrl('create', ['inventory_id' => $record->id]));
+                        })
+                        ->color('primary'),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

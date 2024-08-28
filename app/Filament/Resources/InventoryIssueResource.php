@@ -6,6 +6,7 @@ use App\Filament\Resources\InventoryIssueResource\Pages;
 use App\Filament\Resources\InventoryIssueResource\RelationManagers;
 use App\Models\Inventory;
 use App\Models\InventoryIssue;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -37,12 +38,14 @@ class InventoryIssueResource extends Resource
                     ->numeric()
                     ->default(1),
                 Forms\Components\Toggle::make('returnable')
+            ->inline(false)
                     ->label('Returnable Item')
                     ->live()
                     ->required(),
                 Forms\Components\DatePicker::make('issue_date')
                     ->required(),
                 Forms\Components\DatePicker::make('return_date')
+            ->minDate(fn(Get $get) => Carbon::parse($get('issue_date'))->subDay(-1))
                     ->visible(fn(Get $get): bool =>  $get('returnable'))
                     ->required(),
                 Forms\Components\Textarea::make('remarks')
