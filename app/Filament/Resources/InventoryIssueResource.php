@@ -2,10 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\InventoryIssueResource\Pages;
-use App\Filament\Resources\InventoryIssueResource\RelationManagers;
-use App\Models\Inventory;
-use App\Models\InventoryIssue;
+use App\Filament\Resources\InventoryIssueResource\Pages;use App\Models\InventoryIssue;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -13,8 +10,6 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class InventoryIssueResource extends Resource
 {
@@ -57,10 +52,10 @@ class InventoryIssueResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('inventory_id')
+                Tables\Columns\TextColumn::make('inventory.item_name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('employee_id')
+            Tables\Columns\TextColumn::make('employee.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity')

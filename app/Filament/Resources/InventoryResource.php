@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class InventoryResource extends Resource
@@ -29,7 +30,7 @@ class InventoryResource extends Resource
                 Forms\Components\TextInput::make('item_name')
                     ->required(),
                 Forms\Components\Select::make('item_category')
-                    ->options(['stationary' => 'STATIONARY', 'It' => 'IT', 'other' => 'OTHER'])
+            ->options(['STATIONARY' => 'STATIONARY', 'IT' => 'IT', 'OTHER' => 'OTHER'])
                     ->required(),
                 Forms\Components\TextInput::make('quantity')
                     ->required()
@@ -37,10 +38,9 @@ class InventoryResource extends Resource
                     ->minValue(0)
                     ->live()
                     ->default(1),
-                Forms\Components\Toggle::make('in_stock')
-                    ->inline(false)
-                    ->declined(fn(Get $get) => $get('quantity') === 0)
-                    ->label('In Stock'),
+            Forms\Components\TextInput::make('price')
+            ->integer()
+            ->suffix('₹'),
                 Forms\Components\Textarea::make('remarks')
                     ->columnSpanFull(),
             ]);
@@ -57,8 +57,11 @@ class InventoryResource extends Resource
                 Tables\Columns\TextColumn::make('quantity')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('in_stock')
-                    ->boolean(),
+            Tables\Columns\TextColumn::make('price')
+            ->numeric()->prefix('₹ ')->label('Price per item')->sortable(),
+            Tables\Columns\IconColumn::make('in_stock')
+            ->boolean()->trueIcon('heroicon-s-check-circle')->falseIcon('heroicon-s-x-circle')
+            ->default(fn(Model $record) => $record->quantity > 0),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
