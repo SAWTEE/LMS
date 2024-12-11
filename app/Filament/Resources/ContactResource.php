@@ -17,53 +17,64 @@ class ContactResource extends Resource
 {
     protected static ?string $model = Contact::class;
     protected static ?string $navigationGroup = 'Manage Address Book';
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-user-plus';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([Forms\Components\Select::make('title')
-                ->options(['Mr' => 'Mr', 'Mrs' => 'Mrs', 'Miss' => 'Miss', 'Dr' => 'Dr', 'Prof.' => 'Prof.']),
+                ->options(['Mr' => 'Mr', 'Mrs' => 'Mrs', 'Miss' => 'Miss', 'Dr' => 'Dr', 'Prof.' => 'Prof.', 'Other' => 'Other'])->default('Other')->required(),
                 Forms\Components\TextInput::make('name')
-                    ->required(),
-                Forms\Components\TextInput::make('gender'),
-                Forms\Components\TextInput::make('designation'),
+                ->required()->placeholder('John Doe'),
+            Forms\Components\Select::make('gender')
+                ->options(['male' => 'Male', 'female' => 'Female', 'lgbqt' => 'LGBQT', 'prefer not to say' => 'Prefer not to say', 'other' => 'Other'])->default('other')->required(),
+            Forms\Components\TextInput::make('designation')
+                ->placeholder('CEO, Manager, Teacher'),
             Forms\Components\Select::make('language')
-            ->options(['english' => 'English', 'nepali' => 'Nepali', 'both' => 'Both']),
+                ->options(['english' => 'English', 'nepali' => 'Nepali', 'both' => 'Both', 'other' => 'Other'])->default('other'),
                 Forms\Components\TextInput::make('email')
-                    ->email(),
+                ->email()->placeholder('john.doe@me.com'),
                 Forms\Components\TextInput::make('fax')
             ->tel()
-            ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
-                    ->numeric(),
+                ->integer()
+                ->mask('+999-999-999-9999')
+                ->placeholder('+999-999-999-9999')
+                ->stripCharacters('-', '+')
+                ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
                 Forms\Components\TextInput::make('phone_number')
                     ->tel()
-                    ->numeric(),
+                ->integer()
+                ->mask('+999-999-999-9999')
+                ->placeholder('+999-999-999-9999')
+                ->stripCharacters('-', '+')
+                ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
                 Forms\Components\TextInput::make('mobile_number')
             ->tel()
+            ->integer()
             ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
             ->mask('+999-999-999-9999')
             ->placeholder('+999-999-999-9999')
-            ->stripCharacters('-', '+')
-                    ->numeric(),
+                ->stripCharacters('-', '+'),
                 Forms\Components\TextInput::make('extension_number')
             ->length(3)
+            ->mask('999')
+            ->placeholder('999')
+            ->stripCharacters('-', '+')
                     ->numeric(),
-                Forms\Components\TextInput::make('organisation_name'),
-                Forms\Components\TextInput::make('organisation_department'),
-                Forms\Components\TextInput::make('organisation_address'),
-                Forms\Components\TextInput::make('personal_address_one'),
-                Forms\Components\TextInput::make('personal_address_two'),
-                Forms\Components\TextInput::make('city'),
-                Forms\Components\TextInput::make('state'),
-                Forms\Components\TextInput::make('country'),
-                Forms\Components\TextInput::make('region'),
-                Forms\Components\TextInput::make('zip_code'),
-            Forms\Components\TextInput::make('postal_code'),
+            Forms\Components\TextInput::make('organisation_name')->placeholder('Area 51'),
+            Forms\Components\TextInput::make('organisation_department')->placeholder('IT Department'),
+            Forms\Components\TextInput::make('organisation_address')->placeholder('Area 51, Nevada, United States'),
+            Forms\Components\TextInput::make('personal_address_one')->placeholder('Area 51, Nevada, United States'),
+            Forms\Components\TextInput::make('personal_address_two')->placeholder('Area 51, Nevada, United States'),
+            Forms\Components\TextInput::make('city')->placeholder('Nevada'),
+            Forms\Components\TextInput::make('state')->placeholder('Nevada'),
+            Forms\Components\TextInput::make('country')->placeholder('United States'),
+            Forms\Components\TextInput::make('region')->placeholder('Nevada'),
+            Forms\Components\TextInput::make('zip_code')->placeholder('00000'),
+            Forms\Components\TextInput::make('postal_code')->placeholder('00000'),
                 Forms\Components\Select::make('contact_category_id')
                     ->relationship('contactCategory', 'name')
-                    ->required(),
+                ->required()->default('3'),
             ]);
     }
 
@@ -155,6 +166,7 @@ class ContactResource extends Resource
     {
         return [
             'index' => Pages\ListContacts::route('/'),
+            'grid' => Pages\GridViewContacts::route('/grid'),
             'create' => Pages\CreateContact::route('/create'),
             'view' => Pages\ViewContact::route('/{record}'),
             'edit' => Pages\EditContact::route('/{record}/edit'),
