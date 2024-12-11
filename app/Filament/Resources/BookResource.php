@@ -85,7 +85,7 @@ class BookResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('isbn')
             ->searchable()->sortable(),
-            Tables\Columns\ToggleColumn::make('IN/OUT')->default(fn($record) => BookIssue::where('book_id', $record->id)->exists())->columnSpan(1)->disabled(),
+            Tables\Columns\IconColumn::make('is_issued')->boolean(),
             Tables\Columns\TextColumn::make('category.name')
                     ->numeric()
                     ->sortable(),
