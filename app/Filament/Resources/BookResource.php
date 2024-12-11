@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BookResource\Pages;
 use App\Filament\Resources\BookResource\RelationManagers;
 use App\Models\Book;
+use App\Models\BookIssue;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -18,12 +19,18 @@ class BookResource extends Resource
 {
     protected static ?string $model = Book::class;
     protected static ?string $navigationGroup = 'Manage Library';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\TextInput::make('id')
+                    ->disabled(),
+                Forms\Components\TextInput::make('book_call_number')
+                    ->label('Book Call Number')
+                    ->required(),
                 Forms\Components\TextInput::make('title')
             ->label('Book Title')
                     ->required(),
@@ -46,8 +53,7 @@ class BookResource extends Resource
                 ->editOptionForm([
                     Forms\Components\TextInput::make('name')
                         ->required(),
-                ])
-                    ->required()
+            ])
                     ->native(false),
                 Forms\Components\Select::make('shelf_id')
                     ->relationship('shelf', 'name')
@@ -60,29 +66,28 @@ class BookResource extends Resource
                 ->editOptionForm([
                     Forms\Components\TextInput::make('name')
                         ->required(),
-                ])
-                    ->required()
+            ])
                     ->native(false),
                 Forms\Components\TextInput::make('publisher')
                     ,
                 Forms\Components\TextInput::make('published_year')
             ->numeric(),
-            Forms\Components\TextInput::make('book_count')
-                    ->numeric(),
+
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('isbn')
-                    ->searchable(),
-            Tables\Columns\TextColumn::make('book_count'),
+            ->searchable()->sortable(),
+            Tables\Columns\ToggleColumn::make('IN/OUT')->default(fn(BookIssue $record) => BookIssue::where('book_id', $record->id)->where('returned_at', null)->exists())->columnSpan(1),
             Tables\Columns\TextColumn::make('category.name')
                     ->numeric()
                     ->sortable(),
