@@ -27,12 +27,9 @@ class BookIssueResource extends Resource
                 Forms\Components\Select::make('book_id')
                     ->relationship('book', 'title')
                 ->searchable()
-                ->native(false)
-                // ->getSelectedRecord()
+            ->native(false)
                 ->required(),
-            // Forms\Components\TextInput::make('book_id')
-            //     ->label('Book ID')
-            //     ->disabled(),
+
                 Forms\Components\Select::make('employee_id')
                     ->relationship('employee', 'name')
                     ->required(),

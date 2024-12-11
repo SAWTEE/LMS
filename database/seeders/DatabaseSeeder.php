@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'Admin',
-            'email' => 'ankur.sawtee@gmail.com',
+            'email' => 'admin@admin.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         ]);
 
@@ -32,10 +32,13 @@ class DatabaseSeeder extends Seeder
         Employee::create( ['name' => 'Dhrubesh C. Regmi']);
         Employee::create( ['name' => 'Aayush Paudel']);
         Employee::create( ['name' => 'Rupesh Tha']);
-        BookCategory::create(['name' => 'Nepali']);
-        BookCategory::create(['name' => 'English']);
-        BookCategory::create(['name' => 'SAWTEE Report']);
-        BookCategory::create(['name' => 'Other Report']);
+        Employee::create(['name' => 'Manish Dhungana']);
+        Employee::create(['name' => 'Paras Kharel']);
+        Employee::create(['name' => 'Krishna Tamang']);
+        BookCategory::create(['name' => 'N-Book']);
+        BookCategory::create(['name' => 'E-Book']);
+        BookCategory::create(['name' => 'S-Report']);
+        BookCategory::create(['name' => 'O-Report']);
         BookCategory::create(['name' => 'Publication']);
         ContactCategory::create(['name' => 'SAWTEE', 'parent_id' => null]);
         ContactCategory::create(['name' => 'National', 'parent_id' => null]);

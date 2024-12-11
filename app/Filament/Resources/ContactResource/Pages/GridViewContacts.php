@@ -3,23 +3,15 @@
 namespace App\Filament\Resources\ContactResource\Pages;
 
 use App\Filament\Resources\ContactResource;
+use Filament\Resources\Pages\Page;
 use Filament\Actions;
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Resources\Pages\ListRecords;
 
-class ListContacts extends ListRecords
+class GridViewContacts extends Page
 {
     protected static string $resource = ContactResource::class;
 
-
-    // public function getTabs(): array
-    // {
-    //     return [
-    //         'male' => Tab::make('Male Contacts'),
-    //         'female' => Tab::make('Grid View'),
-    //     ];
-    // }
+    protected static string $view = 'filament.resources.contact-resource.pages.grid-view-contacts';
 
     protected function getHeaderActions(): array
     {
