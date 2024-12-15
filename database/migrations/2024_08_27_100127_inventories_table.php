@@ -18,7 +18,6 @@ return new class extends Migration
             $table->tinyInteger('quantity')->default(1);
             $table->integer('price')->nullable()->default(0);
             $table->tinyText('remarks')->nullable();
-            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -12,8 +12,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BookResource extends Resource
 {
@@ -87,7 +85,7 @@ class BookResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('isbn')
             ->searchable()->sortable(),
-            Tables\Columns\ToggleColumn::make('IN/OUT')->default(fn(BookIssue $record) => BookIssue::where('book_id', $record->id)->where('returned_at', null)->exists())->columnSpan(1),
+            Tables\Columns\ToggleColumn::make('IN/OUT')->default(fn($record) => BookIssue::where('book_id', $record->id)->exists())->columnSpan(1)->disabled(),
             Tables\Columns\TextColumn::make('category.name')
                     ->numeric()
                     ->sortable(),
@@ -151,13 +149,5 @@ class BookResource extends Resource
             'view' => Pages\ViewBook::route('/{record}'),
             'edit' => Pages\EditBook::route('/{record}/edit'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }
