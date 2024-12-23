@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('author')->nullable();
             $table->string('isbn')->unique()->nullable();
+            $table->boolean('is_issued')->default(false);
             $table->foreignId('book_category_id')->constrained('book_categories')->onDelete('cascade');
             $table->foreignId('shelf_id')->constrained('shelves')->onDelete('cascade');
             $table->string('publisher')->nullable();

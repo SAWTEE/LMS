@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ContactResource\Pages;
 
 use App\Filament\Resources\ContactResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
 class EditContact extends EditRecord
@@ -18,5 +19,10 @@ class EditContact extends EditRecord
             Actions\ForceDeleteAction::make(),
             Actions\RestoreAction::make(),
         ];
+    }
+
+    protected function afterCreate(): void
+    {
+        Notification::make()->title('Contact record edited successfully')->success()->send();
     }
 }

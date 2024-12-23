@@ -4,6 +4,7 @@ namespace App\Filament\Resources\InventoryResource\Pages;
 
 use App\Filament\Resources\InventoryResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
 class EditInventory extends EditRecord
@@ -18,5 +19,10 @@ class EditInventory extends EditRecord
             Actions\ForceDeleteAction::make(),
             Actions\RestoreAction::make(),
         ];
+    }
+
+    protected function afterCreate(): void
+    {
+        Notification::make()->title('Inventory record edited successfully')->success()->send();
     }
 }

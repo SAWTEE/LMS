@@ -5,19 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Book extends Model
 {
     use HasFactory;
-    use SoftDeletes;
+
+    protected $cast = 'is_issued';
 
     protected $table = 'books';
 
     protected $fillable = [
         'title',
+        'book_call_number',
         'author',
         'isbn',
+        'is_issued',
         'book_category_id',
         'shelf_id',
         'publisher',
@@ -37,5 +40,10 @@ class Book extends Model
     public function issues()
     {
         return $this->hasMany(BookIssue::class);
+    }
+
+    public function isIssued()
+    {
+        return $this->is_issued;
     }
 }

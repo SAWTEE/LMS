@@ -73,9 +73,7 @@ class InventoryResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                Tables\Filters\TrashedFilter::make(),
-            ])
+
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
@@ -92,7 +90,6 @@ class InventoryResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
