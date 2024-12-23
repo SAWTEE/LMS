@@ -5,6 +5,7 @@ namespace App\Filament\Resources\InventoryIssueResource\Pages;
 use App\Filament\Resources\InventoryIssueResource;
 use App\Models\Inventory;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateInventoryIssue extends CreateRecord
@@ -34,6 +35,8 @@ class CreateInventoryIssue extends CreateRecord
             $inventory->quantity = $inventory->quantity - $quantity;
             $inventory->save();
         }
+
+        Notification::make()->title('Inventory issued successfully')->success()->send();
 
         // event(new BookIssued($this->record));
     }

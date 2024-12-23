@@ -5,7 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BookResource\Pages;
 use App\Filament\Resources\BookResource\RelationManagers;
 use App\Models\Book;
-use App\Models\BookIssue;
+use Filament\Tables\Actions\Action;
+
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -32,8 +33,7 @@ class BookResource extends Resource
                 Forms\Components\TextInput::make('title')
             ->label('Book Title')
                     ->required(),
-                Forms\Components\TextInput::make('author')
-                    ,
+            Forms\Components\TextInput::make('author'),
                 Forms\Components\TextInput::make('isbn')
             ->label('ISBN Number')
                 ->mask('999-9-99-999999-9')
@@ -44,9 +44,10 @@ class BookResource extends Resource
             ->relationship('category', 'name')
             ->searchable()
             ->preload()
+            ->required()
             ->createOptionForm([
                 Forms\Components\TextInput::make('name')
-                ->required(),
+                    ->required(),
             ])
                 ->editOptionForm([
                     Forms\Components\TextInput::make('name')
@@ -56,6 +57,7 @@ class BookResource extends Resource
                 Forms\Components\Select::make('shelf_id')
                     ->relationship('shelf', 'name')
             ->searchable()
+            ->required()
             ->preload()
             ->createOptionForm([
                 Forms\Components\TextInput::make('name')
@@ -66,8 +68,7 @@ class BookResource extends Resource
                         ->required(),
             ])
                     ->native(false),
-                Forms\Components\TextInput::make('publisher')
-                    ,
+            Forms\Components\TextInput::make('publisher'),
                 Forms\Components\TextInput::make('published_year')
             ->numeric(),
 
@@ -85,7 +86,7 @@ class BookResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('isbn')
             ->searchable()->sortable(),
-            Tables\Columns\ToggleColumn::make('IN/OUT')->default(fn($record) => BookIssue::where('book_id', $record->id)->exists())->columnSpan(1)->disabled(),
+            Tables\Columns\IconColumn::make('is_issued')->boolean()->columnSpan(1),
             Tables\Columns\TextColumn::make('category.name')
                     ->numeric()
                     ->sortable(),
@@ -110,27 +111,23 @@ class BookResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                Tables\Filters\TrashedFilter::make(),
-            ])
-            ->actions([ActionGroup::make([Tables\Actions\ViewAction::make(),
+            ->actions([
+                Action::make('delete')->action(fn(Book $record) => $record->delete())->button()->color('danger')->requiresConfirmation(),
+                Action::make('Issue')->action(function (Book $record) {
+                    return redirect(BookIssueResource::getUrl('create', ['book_id' => $record->id]));
+            })->button()->color('primary'),
+            ActionGroup::make([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('Issue Book')
-                    ->button()
-                    ->action(function (Book $record) {
-                        return redirect(BookIssueResource::getUrl('create', ['book_id' => $record->id]));
-                    })
-                    ->color('primary'),
+
             ])->iconButton(),
 
         ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->bulkActions([Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make()->requiresConfirmation(),
                 ]),
             ]);
+
     }
 
     public static function getRelations(): array

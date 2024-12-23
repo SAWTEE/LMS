@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\BookIssueResource\Pages;
 
 use App\Filament\Resources\BookIssueResource;
+use App\Models\Book;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateBookIssue extends CreateRecord
@@ -24,14 +26,13 @@ class CreateBookIssue extends CreateRecord
         ]);
     }
 
-    // protected function afterCreate(): void
-    // {
-    //     $book = Book::find($this->book_id);
-    //     if ($book->book_count > 0) {
-    //         $book->book_count = $book->book_count - 1;
-    //         $book->save();
-    //     }
+    protected function afterCreate(): void
+    {
+        $book = Book::find($this->book_id);
+        $book->update(['is_issued' => 1]);
 
-    //     // event(new BookIssued($this->record));
-    // }
+        Notification::make()->title('Book Issued Successfully')->success()->send();
+
+        // event(new BookIssued($this->record));
+    }
 }
