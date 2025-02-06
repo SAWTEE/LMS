@@ -4,6 +4,7 @@ namespace App\Filament\Resources\BookIssueResource\Pages;
 
 use App\Filament\Resources\BookIssueResource;
 use App\Models\Book;
+use App\Models\BookIssue;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -28,7 +29,12 @@ class CreateBookIssue extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $book = Book::find($this->book_id);
+        $queryHasBookId = request()->query('book_id') !== null;
+        if ($queryHasBookId) {
+            $book = Book::find($this->book_id);
+        }
+        $latestIssuedBook = BookIssue::latest()->first();
+        $book = Book::find($latestIssuedBook->book_id);
         $book->update(['is_issued' => 1]);
 
         Notification::make()->title('Book Issued Successfully')->success()->send();
